@@ -1,0 +1,105 @@
+---
+title: "Gruppe 9"
+author: "Noah Robyr"
+format:
+  html:
+    code-fold: true
+    code-tools: true
+editor: visual
+---
+
+## Theory
+
+### *Research Question:*
+
+How effectively does the Global Party Survey capture the multidimensional nature of populism at party level?
+
+### *Hypothesis:*
+
+H0:
+
+The Global Party Survey\'s populism measures will form coherent dimensions, effectively distinguishing between varying intensities of populism across parties.
+
+H1:
+
+The Global Party Survey\'s populism measures will not form coherent dimensions, effectively distinguishing between varying intensities of populism across parties.
+
+## Running Code
+
+TODO:
+
+Difference btw regions and political positions;
+
+WATCH OUT FOR V18 and V19 (here 0=\>populism and 10=\>not populist) (maybe try to invert the regression ????)
+
+Look if other var correlate with populism (ie Migration or Nationalism);
+
+Render as pdf;
+
+Learn how to use quarto properly;
+
+Try to name the 2 dimension from the EFA and theorize;
+
+See what multilevel regression would do with these underlying dimensions;
+
+#### Libraries
+
+```{r}
+library(haven)
+library(dplyr)
+library(psych)
+library(GGally)
+library(ggcorrplot) 
+library(FactoMineR) 
+library(factoextra)   
+library(lavaan)
+library(tidyverse)
+library(GPArotation)
+```
+
+#### Getting The Data and splitting the relevant Variables for populism
+
+```{r}
+df<-read_dta("Global_Party_Survey.dta")
+populism_vars <- df %>% select(V8_Scale, V9, V18, V19, V20, V21)
+```
+
+#### Cronbach's Alpha
+
+```{r}
+alpha_result <- psych::alpha(populism_vars)
+alpha_result
+```
+
+The Alpha value being over 0.6 it makes sense to consider that the inner consistency of the values hold
+
+#### Correlation Matrix
+
+```{r}
+cor_matrix <- cor(populism_vars, use = "complete.obs")
+ggcorrplot(cor_matrix, lab = TRUE, title = "Correlation Matrix for Populism Indicators")
+```
+
+#### Explorative Factor Analysis (EFA)
+
+```{r}
+
+nfac<-VSS(populism_vars,n=8,rotate="none",plot =FALSE)
+nfac
+
+paf_fit<-fa(populism_vars, nfactors=2, fm = "pa", rotate="varimax")
+summary(paf_fit)
+paf_fit
+print(paf_fit$loadings, cutoff = 0.1) 
+fa.diagram(paf_fit, simple = TRUE, main = "EFA Factor Loadings")
+```
+
+#### Principal Component Analysis (PCA)
+
+```{r}
+pca_result <- PCA(populism_vars, scale.unit = TRUE)
+fviz_eig(pca_result)
+fviz_pca_var(pca_result, col.var = "contrib", repel = TRUE) +
+  labs(title = "PCA of Populism Indicators")
+summary(pca_result)
+```

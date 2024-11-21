@@ -1,0 +1,67 @@
+---
+title: "Test"
+format: revealjs
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+## Bullets
+
+When you click the **Render** button a document will be generated that includes:
+
+-   Content authored with markdown
+-   Output from executable code
+
+## Code
+
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+dfreg1<-df%>%filter(Region==1)
+dfreg2<-df%>%filter(Region==2)
+dfreg3<-df%>%filter(Region==3)
+dfreg4<-df%>%filter(Region==4)
+dfreg5<-df%>%filter(Region==5)
+dfreg6<-df%>%filter(Region==6)
+
+
+populism_vars_reg1 <- dfreg1 %>% select(V8_Scale, V9, V18, V19, V20, V21)
+populism_vars_reg2 <- dfreg2 %>% select(V8_Scale, V9, V18, V19, V20, V21)
+populism_vars_reg3 <- dfreg3 %>% select(V8_Scale, V9, V18, V19, V20, V21)
+populism_vars_reg4 <- dfreg4 %>% select(V8_Scale, V9, V18, V19, V20, V21)
+populism_vars_reg5 <- dfreg5 %>% select(V8_Scale, V9, V18, V19, V20, V21)
+populism_vars_reg6 <- dfreg6 %>% select(V8_Scale, V9, V18, V19, V20, V21)
+```
+
+```{r}
+cor_matrix_reg1 <- cor(populism_vars_reg1, use = "complete.obs")
+ggcorrplot(cor_matrix_reg1, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Eastern Europe & Central Asia")
+```
+
+```{r}
+cor_matrix_reg5 <- cor(populism_vars_reg5, use = "complete.obs")
+ggcorrplot(cor_matrix_reg5, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Western Europe, North America, Australia and New Zealand")
+```
+
+```{r}
+cor_matrix_reg2 <- cor(populism_vars_reg2, use = "complete.obs")
+ggcorrplot(cor_matrix_reg2, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Latin America & the Carrabiean")
+```
+
+```{r}
+cor_matrix_reg3 <- cor(populism_vars_reg3, use = "complete.obs")
+ggcorrplot(cor_matrix_reg3, lab = TRUE, title = "Correlation Matrix for Populism Indicators in MENA")
+```
+
+```{r}
+cor_matrix_reg4 <- cor(populism_vars_reg4, use = "complete.obs")
+ggcorrplot(cor_matrix_reg4, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Sub-Saharan Africa")
+```
+
+```{r}
+cor_matrix_reg6 <- cor(populism_vars_reg5, use = "complete.obs")
+ggcorrplot(cor_matrix_reg6, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Asia-Pacific")
+```
