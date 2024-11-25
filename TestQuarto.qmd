@@ -1,6 +1,9 @@
 ---
 title: "Test"
-format: revealjs
+format:   
+  pdf:
+    code-fold: true
+    code-tools: true
 editor: visual
 ---
 
@@ -20,6 +23,22 @@ When you click the **Render** button a document will be generated that includes:
 When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
 
 ```{r}
+library(haven)
+library(dplyr)
+library(psych)
+library(GGally)
+library(ggcorrplot) 
+library(FactoMineR) 
+library(factoextra)   
+library(lavaan)
+library(tidyverse)
+library(GPArotation)
+```
+
+```{r}
+df<-read_dta("Global_Party_Survey.dta")
+
+
 dfreg1<-df%>%filter(Region==1)
 dfreg2<-df%>%filter(Region==2)
 dfreg3<-df%>%filter(Region==3)
@@ -27,41 +46,153 @@ dfreg4<-df%>%filter(Region==4)
 dfreg5<-df%>%filter(Region==5)
 dfreg6<-df%>%filter(Region==6)
 
-
 populism_vars_reg1 <- dfreg1 %>% select(V8_Scale, V9, V18, V19, V20, V21)
 populism_vars_reg2 <- dfreg2 %>% select(V8_Scale, V9, V18, V19, V20, V21)
 populism_vars_reg3 <- dfreg3 %>% select(V8_Scale, V9, V18, V19, V20, V21)
 populism_vars_reg4 <- dfreg4 %>% select(V8_Scale, V9, V18, V19, V20, V21)
 populism_vars_reg5 <- dfreg5 %>% select(V8_Scale, V9, V18, V19, V20, V21)
 populism_vars_reg6 <- dfreg6 %>% select(V8_Scale, V9, V18, V19, V20, V21)
-```
 
-```{r}
 cor_matrix_reg1 <- cor(populism_vars_reg1, use = "complete.obs")
-ggcorrplot(cor_matrix_reg1, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Eastern Europe & Central Asia")
-```
-
-```{r}
 cor_matrix_reg5 <- cor(populism_vars_reg5, use = "complete.obs")
-ggcorrplot(cor_matrix_reg5, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Western Europe, North America, Australia and New Zealand")
-```
-
-```{r}
 cor_matrix_reg2 <- cor(populism_vars_reg2, use = "complete.obs")
-ggcorrplot(cor_matrix_reg2, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Latin America & the Carrabiean")
-```
-
-```{r}
 cor_matrix_reg3 <- cor(populism_vars_reg3, use = "complete.obs")
-ggcorrplot(cor_matrix_reg3, lab = TRUE, title = "Correlation Matrix for Populism Indicators in MENA")
-```
-
-```{r}
 cor_matrix_reg4 <- cor(populism_vars_reg4, use = "complete.obs")
-ggcorrplot(cor_matrix_reg4, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Sub-Saharan Africa")
+cor_matrix_reg6 <- cor(populism_vars_reg5, use = "complete.obs")
+
+cor_matrix_regGlobSouth <- cor(populism_vars_GlobSouth, use = "complete.obs")
 ```
 
 ```{r}
-cor_matrix_reg6 <- cor(populism_vars_reg5, use = "complete.obs")
+#| label: fig-mpg
+#| fig-cap: "Comparing Populism Variable Throughout the World"
+#| fig-subcap:
+#|   - "Eastern Europe & Central Asia"
+#|   - "Western Europe, North America, Australia and New Zealand"
+#|   - "Latin America & the Carrabiean"
+#|   - "MENA"
+#|   - "Sub-Saharan Africa"
+#|   - "Asia-Pacific"
+#| layout-ncol: 2
+#| layout-nrow: 3
+#| column: page
+
+ggcorrplot(cor_matrix_reg1, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Eastern Europe & Central Asia")
+
+ggcorrplot(cor_matrix_reg5, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Western Europe, North America, Australia and New Zealand")
+
+ggcorrplot(cor_matrix_reg2, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Latin America & the Carrabiean")
+
+ggcorrplot(cor_matrix_reg3, lab = TRUE, title = "Correlation Matrix for Populism Indicators in MENA")
+
+ggcorrplot(cor_matrix_reg4, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Sub-Saharan Africa")
+
 ggcorrplot(cor_matrix_reg6, lab = TRUE, title = "Correlation Matrix for Populism Indicators in Asia-Pacific")
+
+```
+
+```{r}
+
+pca_result_reg1 <- PCA(populism_vars_reg1, scale.unit = TRUE)
+fviz_eig(pca_result_reg1)
+
+pca_result_reg5 <- PCA(populism_vars_reg5, scale.unit = TRUE)
+fviz_eig(pca_result_reg5)
+
+
+pca_result_reg2 <- PCA(populism_vars_reg2, scale.unit = TRUE)
+fviz_eig(pca_result_reg2)
+
+
+pca_result_reg3 <- PCA(populism_vars_reg3, scale.unit = TRUE)
+fviz_eig(pca_result_reg1)
+
+
+pca_result_reg4 <- PCA(populism_vars_reg4, scale.unit = TRUE)
+fviz_eig(pca_result_reg4)
+
+
+pca_result_reg6 <- PCA(populism_vars_reg6, scale.unit = TRUE)
+fviz_eig(pca_result_reg6)
+
+pca_result_regGlobSouth <- PCA(populism_vars_GlobSouth, scale.unit = TRUE)
+fviz_eig(pca_result_reg6)
+
+```
+
+```{r}
+#| label: fig-mpg
+#| fig-cap: "Comparing Populism Variable Throughout the World"
+#| fig-subcap:
+#|   - "Eastern Europe & Central Asia"
+#|   - "Western Europe, North America, Australia and New Zealand"
+#|   - "Latin America & the Carrabiean"
+#|   - "MENA"
+#|   - "Sub-Saharan Africa"
+#|   - "Asia-Pacific"
+#| layout-ncol: 2
+#| layout-nrow: 3
+#| column: page
+fviz_pca_var(pca_result_reg1, col.var = "contrib", repel = TRUE) +
+  labs(title = "PCA of Populism Indicators In Eastern Europe & Central Asia")
+fviz_pca_var(pca_result_reg5, col.var = "contrib", repel = TRUE) +
+  labs(title = "PCA of Populism Indicators In Western Europe, North America, Australia and New Zealand")
+fviz_pca_var(pca_result_reg2, col.var = "contrib", repel = TRUE) +
+  labs(title = "PCA of Populism Indicators In Latin America & the Carrabiean")
+fviz_pca_var(pca_result_reg3, col.var = "contrib", repel = TRUE) +
+  labs(title = "PCA of Populism Indicators In MENA")
+fviz_pca_var(pca_result_reg4, col.var = "contrib", repel = TRUE) +
+  labs(title = "PCA of Populism Indicators In Sub-Saharan Africa")
+fviz_pca_var(pca_result_reg6, col.var = "contrib", repel = TRUE) +
+  labs(title = "PCA of Populism Indicators In Asia-Pacific")
+```
+
+Global South as a geographical unit (=MENA+Latin America+ Caribbean+ SubSaharan Africa+ Asia Pacific (Haug et al. 2021))
+
+```{r}
+dfregGlobalSouth<-df%>%filter(Region==6|Region==4|Region==2|Region==3)
+populism_vars_GlobSouth<- dfregGlobalSouth %>% select(V8_Scale, V9, V18, V19, V20, V21)
+
+cor_matrix_regGlobSouth <- cor(populism_vars_GlobSouth, use = "complete.obs")
+
+ggcorrplot(cor_matrix_regGlobSouth, lab = TRUE, 
+           title = "Correlation Matrix for Populism Indicators in the Global South")
+
+fviz_pca_var(pca_result_regGlobSouth, col.var = "contrib", repel = TRUE) +
+  labs(title = "PCA of Populism Indicators In the Global South")
+
+```
+
+```{r}
+nfacGlobS<-VSS(populism_vars_GlobSouth,n=8,rotate="none",plot =FALSE)
+nfacGlobS
+
+paf_fitGlobS<-fa(populism_vars_GlobSouth, nfactors=2, fm = "pa", rotate="varimax")
+summary(paf_fitGlobS)
+paf_fitGlobS
+print(paf_fitGlobS$loadings, cutoff = 0.1) 
+fa.diagram(paf_fitGlobS, simple = TRUE, main = "EFA Factor Loadings")
+```
+
+```{r}
+nfacEUW<-VSS(populism_vars_reg5,n=8,rotate="none",plot =FALSE)
+nfacEUW
+
+paf_fitEUW<-fa(populism_vars_reg5, nfactors=3, fm = "pa", rotate="varimax")
+summary(paf_fitEUW)
+paf_fitEUW
+print(paf_fitEUW$loadings, cutoff = 0.1) 
+fa.diagram(paf_fitEUW, simple = TRUE, main = "EFA Factor Loadings")
+```
+
+```{r}
+nfacEUOther<-VSS(populism_vars_reg1,n=8,rotate="none",plot =TRUE)
+nfacEUOther
+
+paf_fitEUOther<-fa(populism_vars_reg1, nfactors=2, fm = "pa",rotate="varimax")
+
+summary(paf_fitEUOther)
+paf_fitEUOther
+print(paf_fitEUOther$loadings, cutoff = 0.1) 
+fa.diagram(paf_fitEUOther, simple = TRUE, main = "EFA Factor Loadings")
 ```

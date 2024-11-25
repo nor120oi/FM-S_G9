@@ -2,7 +2,7 @@ library(sjPlot)
 library(tidyverse)
 library(haven)
 library(vdemdata)
-install.packages('tinytex')
+
 
 df<-read_dta("Global_Party_Survey.dta")
 
@@ -63,12 +63,6 @@ cor_matrix_reg6 <- cor(populism_vars_reg6, use = "complete.obs")
 ggcorrplot(cor_matrix_reg6, lab = TRUE, title = "Correlation Matrix for Populism Indicators")
 
 
-
-
-
-
-
-
 pca_result_reg1 <- PCA(populism_vars_reg1, scale.unit = TRUE)
 fviz_eig(pca_result_reg1)
 fviz_pca_var(pca_result_reg1, col.var = "contrib", repel = TRUE) +
@@ -84,5 +78,35 @@ fviz_pca_var(pca_result_reg5, col.var = "contrib", repel = TRUE) +
 populism_vars_reg5%>%ggplot(aes(x=V18,y=V20))+
   geom_point()+
   geom_smooth(method = "lm",formula = y~x)
+
+
+
+
+
+
+
+
+### WTF IS GOING ON HERE WHY RED DOTS ????????
+###TEST
+
+
+populism_vars_reg5TestPol <- dfreg5 %>% select(V10,V13,V15,V8_Scale, V9, V18, V19, V20, V21)
+
+cor_matrix_reg5TestPol <- cor(populism_vars_reg5TestPol, use = "complete.obs")
+ggcorrplot(cor_matrix_reg5TestPol, lab = TRUE)
+
+nfacPolTest<-VSS(populism_vars_reg5TestPol,n=10,rotate="none",plot =TRUE)
+nfacPolTest
+
+paf_fitPolTest<-fa(populism_vars_reg5TestPol, nfactors=2, fm = "pa",rotate="varimax")
+
+summary(paf_fitPolTest)
+paf_fitPolTest
+print(paf_fitPolTest$loadings, cutoff = 0.1) 
+fa.diagram(paf_fitPolTest, simple = TRUE, main = "EFA Factor Loadings")
+
+
+
+
 
 

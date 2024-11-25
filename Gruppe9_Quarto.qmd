@@ -2,7 +2,7 @@
 title: "Gruppe 9"
 author: "Noah Robyr"
 format:
-  html:
+  pdf:
     code-fold: true
     code-tools: true
 editor: visual
@@ -12,35 +12,61 @@ editor: visual
 
 ### *Research Question:*
 
-How effectively does the Global Party Survey capture the multidimensional nature of populism at party level?
+How effectively does the Global Party Survey capture the multidimensional nature of populism?
 
 ### *Hypothesis:*
 
-H0:
+-   **H0:** The GPS populism measures will load onto three distinct dimensions (Will of the People, Anti-Elitism, Strongman Rule), with `V8` and `V9` correlating to all three.
 
-The Global Party Survey\'s populism measures will form coherent dimensions, effectively distinguishing between varying intensities of populism across parties.
+-   **H1:** The GPS populism measures will not load onto three distinct dimensions, or `V8` and `V9` will fail to correlate consistently with all dimensions.
 
-H1:
+### *Theory:*
 
-The Global Party Survey\'s populism measures will not form coherent dimensions, effectively distinguishing between varying intensities of populism across parties.
+The GPS is an expert survey and our task is to assess whether the obtained data measure efficiently populism. The definition of Populism is disputed and its operationalization goes from using two characteristics: Anti-Elitism ("Pure People" VS "Evil Elite") and the necessity to represent the so called "Will Of The People" (Mudde 2004, Mudde & Rovira Kaltwasser 2017); to many more (Strongman Rule (), the disregard towards the consequences of policies (Guiso et al. 2017),...).
+
+To assess whether the GPS manages to captures populism we will need to analyze our dataset, specifically the variables that are supposed to define populism, namely V8 (Populist Rhetoric), V9 (Populist Saliency), V18 (Will Of the People), V19 (People Should Decide), V20 (Politician Corrupt), V21 (Strongman Rule).
+
+Given that our data comes from an expert survey, we expect to see three dimensions form (V18&V19,V20,V21) and V8&V9 should be correlated to all of them. Populism is also considered a primarily European phenomena (and growing in Latin America, Mudde & Rovira Kaltwasser 2018); especially with this definition. For this reason we may have to separate between world regions.
+
+There's also another point to consider: there's amalgams between certain policy position (immigration, nationalism,....) and populism given that our data comes from an expert survey we expect those to be quite low but we will keep them in mind.
+
+Finally personal bias also might be relevant to consider.
+
+METHOD
+
+1.  Test internal consistency with Cronbach's alpha
+
+2.  Check for shared variance with Correlation matrix
+
+3.  Before CFA we will be conducting an exploratory factor analysis to control for the behavior of V8 and V9
+
+4.  Confirmatory Factor Analysis V18&V19\~ Will Of the People; V20\~Anti-Elitism; V21\~Strongman Rule
+
+5.  Throughout the process we will also control for geographical specifies using the variable "Region" and for possible bias (personal bias of expert with the "Personal Background of the experts" Section as well as \~\~\~Opinion??? bias (ie considering parties as populist due solely to their political alignment or their position to key issues such as immigration, nationalism, women's right or ethnic minorities rights; as these are often misunderstood as operationalization variable of populism) using the given variables V10, V13, V14 and V15.
+
+6.  Visual representation (factor loadings and/or maps)
 
 ## Running Code
 
 TODO:
 
-Difference btw regions and political positions;
+1.  Difference btw regions (GLobal South ???, cf Leo for the theory)
 
-WATCH OUT FOR V18 and V19 (here 0=\>populism and 10=\>not populist) (maybe try to invert the regression ????)
+2.  Diff btw political positions/Look if other var correlate with populism (ie Migration or Nationalism), CF Test1.R (93-106), WHY IS THERE RED DOTS!??? HOW CAN WE DECORELATE ??? IS IT CORRELATION OR CAUSATION ??????? DOES THE EFA INVERT THE REGRESSION ?????? OR ARE CERTAIN POPULISM INDICATORS INVERSELY CORRELATED ????? NOTHING MAKESANY SENSE!!!!!! =\>maybe try corr(V8/V9,V10/V13/V15)? cf corr matrix ATTENTION V13 ONCE AGAIN IS INVERSELY BUILT PUTAIN
 
-Look if other var correlate with populism (ie Migration or Nationalism);
+3.  Also try (2) with redistributive
 
-Render as pdf;
+4.  WATCH OUT FOR V18 and V19 (here 0=\>populism and 10=\>not populist) (maybe try to invert the regression ????) also V13
 
-Learn how to use quarto properly;
+5.  Do a CFA after the EFA to confirm the exploratory machin
 
-Try to name the 2 dimension from the EFA and theorize;
+6.  Render as pdf;
 
-See what multilevel regression would do with these underlying dimensions;
+7.  Learn how to use quarto properly;
+
+8.  Try to name the 2 dimension from the EFA and theorize;
+
+9.  See what multilevel regression would do with these underlying dimensions;
 
 #### Libraries
 
@@ -55,6 +81,7 @@ library(factoextra)
 library(lavaan)
 library(tidyverse)
 library(GPArotation)
+library(wesanderson)
 ```
 
 #### Getting The Data and splitting the relevant Variables for populism
@@ -77,7 +104,8 @@ The Alpha value being over 0.6 it makes sense to consider that the inner consist
 
 ```{r}
 cor_matrix <- cor(populism_vars, use = "complete.obs")
-ggcorrplot(cor_matrix, lab = TRUE, title = "Correlation Matrix for Populism Indicators")
+ggcorrplot(cor_matrix, lab = TRUE, title = "Correlation Matrix for Populism Indicators",
+           colors = wes_palette("Royal1",4))
 ```
 
 #### Explorative Factor Analysis (EFA)
